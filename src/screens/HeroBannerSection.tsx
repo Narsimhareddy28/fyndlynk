@@ -1,6 +1,5 @@
 import React from "react";
 import { Button } from "../components/ui/button";
-import GLBViewer from "../components/GLBViewer";
 
 export const HeroBannerSection = (): JSX.Element => {
   return (

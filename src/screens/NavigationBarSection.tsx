@@ -6,21 +6,26 @@ import {
   NavigationMenuList,
 } from "../components/ui/navigation-menu";
 
-export const NavigationBarSection = (): JSX.Element => {
+interface NavigationBarSectionProps {
+  activeSection: string;
+}
+
+export const NavigationBarSection = ({ activeSection }: NavigationBarSectionProps): JSX.Element => {
   // Navigation menu items data
   const navItems = [
-    { label: "Home", active: true },
-    { label: "About Us", active: false },
-    { label: "Products", active: false },
+    { label: "Home", id: "home" },
+    { label: "About Us", id: "about" },
+    { label: "Products", id: "products" },
     { label: "Blog", active: false },
-    { label: "Contact", active: false },
+
+    { label: "Contact", id: "contact" },
   ];
 
   return (
-    <header className="w-full h-16 bg-black flex items-center px-6">
+    <header className="w-full h-16 bg-black/30 backdrop-blur-md flex items-center px-6 sticky top-0 z-50">
       {/* Brand/Logo */}
-      <a href="#" className="flex items-center gap-2 font-sans font-bold text-2xl text-white no-underline select-none">
-        Fyndlynk<span className="text-primary text-3xl">.</span>
+      <a href="#home" className="flex items-center gap-2 font-inter font-light text-2xl text-white no-underline select-none">
+        Fyndlynk<a className=" -ml-2 text-primary ">.</a>
       </a>
       {/* Navigation */}
       <nav className="flex-1 flex justify-end">
@@ -28,10 +33,10 @@ export const NavigationBarSection = (): JSX.Element => {
           {navItems.map((item, index) => (
             <li key={index}>
               <a
-                href="#"
-                className={`font-sans text-base px-2 py-1 transition-colors duration-200 ${
-                  item.active
-                    ? "text-primary font-semibold"
+                href={`#${item.id}`}
+                className={`font-inter text-base px-2 py-1 transition-colors duration-200 ${
+                  activeSection === item.id
+                    ? "text-primary font-medium"
                     : "text-white hover:text-primary"
                 }`}
               >

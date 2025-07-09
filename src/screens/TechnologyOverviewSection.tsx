@@ -22,10 +22,10 @@ export const TechnologyOverviewSection = (): JSX.Element => {
         <div className="flex flex-col md:flex-row justify-between gap-12 md:gap-0">
           {/* Company info section */}
           <div className="mb-8 md:mb-0 max-w-lg">
-            <div className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-white">
+            <div className="font-inter text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-white">
               Fyndlynk<span className="text-primary text-3xl md:text-4xl lg:text-5xl">.</span>
             </div>
-            <p className="text-base md:text-xl mb-6 text-neutral-400">
+            <p className="font-inter text-base md:text-xl mb-6 text-neutral-400">
               Fyndlynk is your partner in progress developing smart,
               cloud-native tools that simplify complexity and accelerate
               innovation.
@@ -48,14 +48,14 @@ export const TechnologyOverviewSection = (): JSX.Element => {
           <div className="grid grid-cols-2 gap-x-8 md:gap-x-12 gap-y-8">
             {/* Company links */}
             <div>
-              <h3 className="text-lg md:text-xl font-black mb-3 md:mb-4 text-white">Company</h3>
+              <h3 className="font-inter text-lg md:text-xl font-black mb-3 md:mb-4 text-white">Company</h3>
               <nav>
                 <ul className="space-y-2">
                   {companyLinks.map((link, index) => (
                     <li key={index}>
                       <a
                         href={link.href}
-                        className="text-base hover:text-primary transition-colors text-neutral-400"
+                        className="font-inter text-base hover:text-primary transition-colors text-neutral-400"
                       >
                         {link.title}
                       </a>
@@ -67,14 +67,14 @@ export const TechnologyOverviewSection = (): JSX.Element => {
 
             {/* Services links */}
             <div>
-              <h3 className="text-lg md:text-xl font-black mb-3 md:mb-4 text-white">Services</h3>
+              <h3 className="font-inter text-lg md:text-xl font-black mb-3 md:mb-4 text-white">Services</h3>
               <nav>
                 <ul className="space-y-2">
                   {serviceLinks.map((link, index) => (
                     <li key={index}>
                       <a
                         href={link.href}
-                        className="text-base hover:text-primary transition-colors text-neutral-400"
+                        className="font-inter text-base hover:text-primary transition-colors text-neutral-400"
                       >
                         {link.title}
                       </a>
@@ -88,7 +88,7 @@ export const TechnologyOverviewSection = (): JSX.Element => {
 
         {/* Large brand name at bottom */}
         <div className="mt-12 md:mt-16 overflow-x-auto">
-          <h1 className="text-[80px] md:text-[180px] lg:text-[280px] font-extrabold leading-none text-neutral-800 whitespace-nowrap">
+          <h1 className="font-inter text-[80px] md:text-[180px] lg:text-[280px] font-extrabold leading-none text-white whitespace-nowrap">
             Fyndlynk<span className="text-primary">.</span>
           </h1>
         </div>

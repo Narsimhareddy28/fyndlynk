@@ -38,11 +38,11 @@ export const ContactFormSection = (): JSX.Element => {
           {/* Left side - Contact information */}
           <div className="w-full lg:w-1/2 flex flex-col space-y-6">
             <div className="mb-2">
-              <span className="text-white rounded-[3px] border border-light border-border bg-[#222121] px-3 py-0.5 w-fit text-sm inline-block border-[0.5px]">Contact</span>
+              <span className="font-inter text-white rounded-[3px] border border-light border-border bg-[#222121] px-3 py-0.5 w-fit text-sm inline-block border-[0.5px]">Contact</span>
             </div>
 
-            <h2 className="font-semibold text-3xl md:text-4xl text-white">Let&apos;s Talk!</h2>
-            <p className="font-medium text-neutral-400 text-base ">Send us a message and we will get back<br />to you within 24 hours to arrange a call</p>
+            <h2 className="font-inter font-semibold text-3xl md:text-4xl text-white">Let&apos;s Talk!</h2>
+            <p className="font-inter font-medium text-neutral-400 text-base ">Send us a message and we will get back<br />to you within 24 hours to arrange a call</p>
             <div className="space-y-3">
               {contactInfo.map((info, index) => (
                 <div key={index} className="flex items-center bg-black border border-neutral-700 rounded-lg p-3">
@@ -50,8 +50,8 @@ export const ContactFormSection = (): JSX.Element => {
                     {React.cloneElement(info.icon, { className: 'w-5 h-5' })}
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-white text-sm mb-0.5">{info.title}</p>
-                    <p className="font-medium text-neutral-400 text-sm">{info.value}</p>
+                    <p className="font-inter font-medium text-white text-sm mb-0.5">{info.title}</p>
+                    <p className="font-inter font-medium text-neutral-400 text-sm">{info.value}</p>
                   </div>
                   <button className="ml-3 w-9 h-9 flex items-center justify-center rounded-md bg-neutral-900 border border-neutral-700 text-white hover:bg-neutral-800 transition-colors">
                     <ArrowRightIcon className="w-5 h-5" />
@@ -83,7 +83,7 @@ export const ContactFormSection = (): JSX.Element => {
                   className="bg-neutral-900 rounded-md border border-neutral-700 min-h-[100px] px-3 py-16 text-white placeholder:text-white w-full resize-none text-sm"
                   placeholder="Official"
                 />
-                <Button className="w-full h-10 bg-red-600 hover:bg-red-700 rounded-md font-bold text-white text-base">
+                <Button className="w-full h-10 rounded-md font-inter font-bold text-white text-base hover:opacity-90 transition-opacity" style={{backgroundColor: '#FF3131'}}>
                   Get Started
                 </Button>
               </CardContent>

@@ -38,7 +38,7 @@ export const ContactFormSection = (): JSX.Element => {
           {/* Left side - Contact information */}
           <div className="w-full lg:w-1/2 flex flex-col space-y-6">
             <div className="mb-2">
-              <span className="font-inter text-white rounded-[3px] border border-light border-border bg-[#222121] px-3 py-0.5 w-fit text-sm inline-block border-[0.5px]">Contact</span>
+              <span className="font-inter text-white rounded-[3px] border border-light border-border bg-[#222121] px-3 py-0.5 w-fit text-sm inline-block border-[0.5px]">FyndUs.</span>
             </div>
 
             <h2 className="font-inter font-semibold text-3xl md:text-4xl text-white">Let&apos;s Talk!</h2>

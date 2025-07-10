@@ -335,6 +335,39 @@
   }
   
   .animation-container {
-    height: 150px;
+    height: 180px; /* Adjusted height for mobile */
+  }
+
+  .window-content {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .avatar {
+    width: 14px;
+    height: 14px;
+  }
+
+  .line {
+    height: 6px;
+  }
+
+  .rectangle.small {
+    height: 20px;
+  }
+
+  .rectangle.large {
+    height: 28px;
+  }
+
+  .window-header {
+    height: 24px;
+    padding: 0 8px;
+    gap: 4px;
+  }
+
+  .window-control {
+    width: 6px;
+    height: 6px;
   }
 }

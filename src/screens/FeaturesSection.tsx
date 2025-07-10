@@ -110,18 +110,18 @@ export const FeaturesSection = (): JSX.Element => {
                     {card.animationType === 'profileCard' && (
                       <div className="window-content p-4 flex flex-col items-center justify-center">
                         {/* Real-Time Profile Card Animation */}
-                        <div className="w-16 h-16 rounded-full bg-white mb-3 animate-pulse"></div>
-                        <div className="w-3/4 h-4 bg-gray-500 rounded-md animate-pulse mb-2"></div>
-                        <div className="w-1/2 h-3 bg-gray-600 rounded-md animate-pulse"></div>
+                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white mb-3 animate-pulse"></div>
+                        <div className="w-3/4 h-3 md:h-4 bg-gray-500 rounded-md animate-pulse mb-2"></div>
+                        <div className="w-1/2 h-2 md:h-3 bg-gray-600 rounded-md animate-pulse"></div>
                       </div>
                     )}
 
                     {card.animationType === 'dataBlocks' && (
                       <div className="window-content p-4 flex justify-around items-center">
                         {/* Modular Data Blocks Animation */}
-                        <div className="w-10 h-16 bg-white rounded-md animate-bounce"></div>
-                        <div className="w-10 h-10 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                        <div className="w-10 h-16 bg-white rounded-md animate-bounce" style={{animationDelay: '0.4s'}}></div>
+                        <div className="w-8 h-12 md:w-10 md:h-16 bg-white rounded-md animate-bounce"></div>
+                        <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                        <div className="w-8 h-12 md:w-10 md:h-16 bg-white rounded-md animate-bounce" style={{animationDelay: '0.4s'}}></div>
                       </div>
                     )}
                   </div>

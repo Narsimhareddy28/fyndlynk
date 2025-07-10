@@ -49,16 +49,16 @@ const App = (): JSX.Element => {
     <div className="bg-black">
       <NavigationBarSection activeSection={activeSection} />
       <div id="home">
-        <HeroBannerSection />
+      <HeroBannerSection />
       </div>
       <div id="about">
-        <FeaturesSection />
+      <FeaturesSection />
       </div>
       <div id="products">
-        <ProductsSection />
+      <ProductsSection />
       </div>
       <div id="contact">
-        <ContactFormSection />
+      <ContactFormSection />
       </div>
       <TechnologyOverviewSection />
     </div>

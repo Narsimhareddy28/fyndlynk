@@ -87,7 +87,7 @@ export const TechnologyOverviewSection = (): JSX.Element => {
         </div>
 
         {/* Large brand name at bottom */}
-        <div className="mt-12 md:mt-16 overflow-x-auto">
+        <div className="mt-12 md:mt-16 overflow-hidden">
           <h1 className="font-inter text-[80px] md:text-[180px] lg:text-[280px] font-extrabold leading-none text-white whitespace-nowrap">
             Fyndlynk<span className="text-primary">.</span>
           </h1>

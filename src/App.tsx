@@ -1,22 +1,42 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import {
-  ContactFormSection,
-  FeaturesSection,
-  HeroBannerSection,
+  HomePageSection,
+  BlogSection,
+  PostPage,
   NavigationBarSection,
-  ProductsSection,
   TechnologyOverviewSection,
 } from "./screens";
 
-const App = (): JSX.Element => {
+const AppContent = (): JSX.Element => {
   const [activeSection, setActiveSection] = useState('home');
-  const sectionRefs = useRef({});
+  const location = useLocation();
 
+  // Set active section based on current route
   useEffect(() => {
+    if (location.pathname === '/blog') {
+      setActiveSection('blog');
+    } else if (location.pathname.startsWith('/post/')) {
+      setActiveSection('blog'); // Keep blog active for individual posts
+    } else if (location.pathname === '/') {
+      // Reset to home when on homepage, let intersection observer handle the rest
+      setActiveSection('home');
+    }
+  }, [location.pathname]);
+
+  // Intersection observer for homepage sections ONLY
+  useEffect(() => {
+    // Only run intersection observer on homepage
+    if (location.pathname !== '/') {
+      // Cleanup any existing observers when not on homepage
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting && location.pathname === '/') {
+            // Double check we're still on homepage before updating
             setActiveSection(entry.target.id);
           }
         });
@@ -36,32 +56,29 @@ const App = (): JSX.Element => {
     });
 
     return () => {
-      sections.forEach((id) => {
-        const section = document.getElementById(id);
-        if (section) {
-          observer.unobserve(section);
-        }
-      });
+      // Cleanup observer
+      observer.disconnect();
     };
-  }, []);
+  }, [location.pathname]);
 
   return (
     <div className="bg-black">
       <NavigationBarSection activeSection={activeSection} />
-      <div id="home">
-      <HeroBannerSection />
-      </div>
-      <div id="about">
-      <FeaturesSection />
-      </div>
-      <div id="products">
-      <ProductsSection />
-      </div>
-      <div id="contact">
-      <ContactFormSection />
-      </div>
+      <Routes>
+        <Route path="/" element={<HomePageSection />} />
+        <Route path="/blog" element={<BlogSection />} />
+        <Route path="/post/:slug" element={<PostPage />} />
+      </Routes>
       <TechnologyOverviewSection />
     </div>
+  );
+};
+
+const App = (): JSX.Element => {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 };
 

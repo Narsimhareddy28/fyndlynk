@@ -1,17 +1,18 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export const TechnologyOverviewSection = (): JSX.Element => {
   // Company navigation links
   const companyLinks = [
-    { title: "Home", href: "#" },
-    { title: "About Us", href: "#" },
-    { title: "Products", href: "#" },
+    { title: "Home", href: "/" },
+    { title: "About Us", href: "#about" },
+    { title: "Products", href: "#products" },
   ];
 
   // Services navigation links
   const serviceLinks = [
-    { title: "Blog", href: "#" },
-    { title: "Contact", href: "#" },
+    { title: "Blog", href: "/blog", isRoute: true },
+    { title: "Contact", href: "#contact" },
     { title: "Terms and Conditions", href: "#" },
     { title: "Privacy Policy", href: "#" },
   ];
@@ -53,12 +54,12 @@ export const TechnologyOverviewSection = (): JSX.Element => {
                 <ul className="space-y-2">
                   {companyLinks.map((link, index) => (
                     <li key={index}>
-                      <a
-                        href={link.href}
+                      <Link
+                        to={link.href}
                         className="font-inter text-base hover:text-primary transition-colors text-neutral-400"
                       >
                         {link.title}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -72,12 +73,21 @@ export const TechnologyOverviewSection = (): JSX.Element => {
                 <ul className="space-y-2">
                   {serviceLinks.map((link, index) => (
                     <li key={index}>
-                      <a
-                        href={link.href}
-                        className="font-inter text-base hover:text-primary transition-colors text-neutral-400"
-                      >
-                        {link.title}
-                      </a>
+                      {link.isRoute ? (
+                        <Link
+                          to={link.href}
+                          className="font-inter text-base hover:text-primary transition-colors text-neutral-400"
+                        >
+                          {link.title}
+                        </Link>
+                      ) : (
+                        <a
+                          href={link.href}
+                          className="font-inter text-base hover:text-primary transition-colors text-neutral-400"
+                        >
+                          {link.title}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>

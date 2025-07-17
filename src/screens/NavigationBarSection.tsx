@@ -21,7 +21,7 @@ export const NavigationBarSection = ({ activeSection }: NavigationBarSectionProp
     <>
       <header className="w-full h-16 bg-black/30 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-50">
         {/* Brand/Logo */}
-        <a href="#home" className="flex items-center gap-2 font-inter font-light text-2xl text-white no-underline select-none">
+        <a href="/" className="flex items-center gap-2 font-inter font-light text-2xl text-white no-underline select-none">
           Fyndlynk<span className="text-primary">.</span>
         </a>
         

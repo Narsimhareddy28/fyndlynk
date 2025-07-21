@@ -5,6 +5,10 @@ const shimmer = "animate-pulse bg-gradient-to-r from-neutral-800 via-neutral-700
 const ProductsSection = (): JSX.Element => {
   return (
     <section className="w-full bg-black py-20 px-4 md:px-0">
+      {/* Section Title */}
+      <div className="flex justify-center mb-4">
+        <h2 className="section-title">Products<span className="dot">.</span></h2>
+      </div>
       <div className="container mx-auto flex flex-col items-center">
         {/* Heading */}
         <h2 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-neutral-400 mb-4 text-center">

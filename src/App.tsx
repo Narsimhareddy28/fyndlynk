@@ -7,6 +7,8 @@ import {
   NavigationBarSection,
   TechnologyOverviewSection,
 } from "./screens";
+import CustomScrollbar from './components/ui/customscrollbar';
+import ScrollToTop from './components/ui/scrolltotop';
 
 const AppContent = (): JSX.Element => {
   const [activeSection, setActiveSection] = useState('home');
@@ -64,12 +66,14 @@ const AppContent = (): JSX.Element => {
   return (
     <div className="bg-black">
       <NavigationBarSection activeSection={activeSection} />
+      <CustomScrollbar />
       <Routes>
         <Route path="/" element={<HomePageSection />} />
         <Route path="/blog" element={<BlogSection />} />
         <Route path="/post/:slug" element={<PostPage />} />
       </Routes>
       <TechnologyOverviewSection />
+      <ScrollToTop />
     </div>
   );
 };

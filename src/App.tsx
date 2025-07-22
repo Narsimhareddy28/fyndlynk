@@ -7,7 +7,7 @@ import {
   NavigationBarSection,
   TechnologyOverviewSection,
 } from "./screens";
-import CustomScrollbar from './components/ui/customscrollbar';
+import CustomScrollbar from './components/ui/CustomScrollbar';
 import ScrollToTop from './components/ui/scrolltotop';
 
 const AppContent = (): JSX.Element => {

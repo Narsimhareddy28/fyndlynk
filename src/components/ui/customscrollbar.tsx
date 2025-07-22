@@ -40,7 +40,7 @@ const CustomScrollbar = () => {
           style={{
             background: '#ff0000',
             height: `${Math.round(scrollPercent * 100)}%`,
-            transition: 'height 0s',
+            transition: 'height 1s',
           }}
         />
       </div>

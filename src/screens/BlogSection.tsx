@@ -46,9 +46,7 @@ export const BlogSection: React.FC = () => {
   return (
     <div className="overflow-x-hidden w-full">
       {/* Section Title */}
-      <div className="flex justify-center mb-4 mt-8">
-        <h2 className="section-title">Blog<span className="dot">.</span></h2>
-      </div>
+   
       <div className="min-h-screen bg-black">
         {/* Hero Section with Main Image */}
         <section className="relative w-full h-[60vh] flex items-center justify-center overflow-hidden">

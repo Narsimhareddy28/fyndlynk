@@ -19,6 +19,10 @@ const POSTS_QUERY = `*[
 export const BlogSection: React.FC = () => {
   const [posts, setPosts] = useState<SanityDocument[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  // Get unique categories from posts
+  const availableTags = Array.from(new Set(posts.map(post => post.category).filter(Boolean)));
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -35,6 +39,18 @@ export const BlogSection: React.FC = () => {
     fetchPosts();
   }, []);
 
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
+  const filteredPosts = selectedTags.length > 0 
+    ? posts.filter(post => post.category && selectedTags.includes(post.category))
+    : posts;
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -44,123 +60,141 @@ export const BlogSection: React.FC = () => {
   }
 
   return (
-    <div className="overflow-x-hidden w-full">
-      {/* Section Title */}
-   
-      <div className="min-h-screen bg-black">
-        {/* Hero Section with Main Image */}
-        <section className="relative w-full h-[60vh] flex items-center justify-center overflow-hidden">
-          {/* Background Image */}
-          <div
-            className="absolute inset-0 bg-cover bg-center filter grayscale opacity-30"
-            style={{
-              backgroundImage: "url(/hero_background.png)",
-            }}
-          ></div>
-          
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-black/60"></div>
-          
-          {/* Animated Background Elements */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="relative w-full max-w-lg h-full flex items-center justify-center">
-              <div className="absolute w-96 h-96 bg-white/5 rounded-full filter blur-3xl animate-pulse" />
-              <div className="absolute w-72 h-72 bg-primary/10 rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-              <div className="absolute w-48 h-48 bg-white/5 rounded-full filter blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
+    <div className="overflow-x-hidden w-full bg-black min-h-screen">
+      {/* Header Section with Quote and Classical Bust */}
+      <section className="relative w-full bg-gradient-to-b from-gray-900 to-black py-16">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            {/* Quote Section */}
+            <div className="flex-1 text-center lg:text-left">
+              <div className="w-16 h-1 bg-white mx-auto lg:mx-0 mb-6"></div>
+              <blockquote className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
+                "The only limit to our realization of tomorrow will be our doubts of today."
+              </blockquote>
+            </div>
+            
+            {/* Classical Bust Image */}
+            <div className="flex-1 flex justify-center lg:justify-end">
+                              <div className="relative w-60 h-60 lg:w-96 lg:h-96 rounded-2xl overflow-hidden" style={{ transform: 'scale(1)' }}>
+                  <img
+                    src="/roman.png"
+                    alt="Classical marble bust"
+                    className="w-full h-full object-cover object-center"
+                    style={{
+                      objectPosition: 'center 20%', // Adjust this to crop vertically (0% = top, 100% = bottom)
+                      // objectPosition: '30% center', // Adjust this to crop horizontally (0% = left, 100% = right)
+                    }}
+                  />
+              </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Hero Content */}
-          <div className="relative z-10 text-center px-4">
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              Blog
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Insights, tutorials, and thoughts on modern development, cloud technologies, and innovation.
-            </p>
-          </div>
-        </section>
+      {/* Main Content Section */}
+      <section className="container mx-auto px-4 py-12 max-w-6xl">
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Blog Posts Column */}
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold text-white mb-8">Blog Post</h2>
+            
+            {filteredPosts.length === 0 ? (
+              <div className="text-center py-16">
+                <p className="text-gray-400 text-lg">
+                  {selectedTags.length > 0 
+                    ? `No posts found for selected tags: ${selectedTags.join(', ')}`
+                    : 'No posts found. Create your first post in Sanity Studio!'
+                  }
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredPosts.map((post) => {
+                  const postImageUrl = post.image
+                    ? urlFor(post.image)?.width(300).height(200).url()
+                    : null;
 
-        {/* Posts Grid */}
-        <section className="container mx-auto px-4 py-16 max-w-6xl">
-          {posts.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-gray-400 text-lg">No posts found. Create your first post in Sanity Studio!</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {posts.map((post) => {
-                const postImageUrl = post.image
-                  ? urlFor(post.image)?.width(400).height(240).url()
-                  : null;
-
-                return (
-                  <article key={post._id} className="group cursor-pointer">
-                    <Link to={`/post/${post.slug.current}`} className="block">
-                      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl overflow-hidden h-full transition-all duration-300 hover:border-primary/50 hover:bg-gray-900/70 hover:transform hover:scale-[1.02]">
-                        
-                        {/* Featured Image */}
-                        <div className="relative h-48 overflow-hidden">
-                          {postImageUrl ? (
-                            <img
-                              src={postImageUrl}
-                              alt={post.title}
-                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                              <svg className="w-16 h-16 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                            </div>
-                          )}
+                  return (
+                    <article key={post._id} className="group cursor-pointer">
+                      <Link to={`/post/${post.slug.current}`} className="block">
+                        <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:transform hover:scale-[1.02]">
                           
-                          {/* Category Badge on Image */}
-                          {post.category && (
-                            <div className="absolute top-4 left-4">
-                              <span className="inline-block bg-black/80 backdrop-blur-sm text-primary px-3 py-1 rounded-full text-sm font-medium">
-                                {post.category}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Content */}
-                        <div className="p-6">
-                          {/* Title */}
-                          <h2 className="text-xl font-bold text-white group-hover:text-primary transition-colors mb-3 line-clamp-2">
-                            {post.title}
-                          </h2>
-
-                          {/* Subtitle */}
-                          {post.subtitle && (
-                            <p className="text-gray-400 mb-4 line-clamp-2 leading-relaxed text-sm">
-                              {post.subtitle}
-                            </p>
-                          )}
-
-                          {/* Meta Info */}
-                          <div className="flex items-center justify-between text-gray-500 text-sm mt-auto pt-4 border-t border-gray-800">
-                            <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
-                            {post.readingTime && (
-                              <span className="flex items-center gap-1">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          {/* Featured Image */}
+                          <div className="relative h-40 overflow-hidden">
+                            {postImageUrl ? (
+                              <img
+                                src={postImageUrl}
+                                alt={post.title}
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
-                                {post.readingTime}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Content */}
+                          <div className="p-4">
+                            {/* Title */}
+                            <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors mb-2 line-clamp-2">
+                              {post.title}
+                            </h3>
+
+                            {/* Date */}
+                            <p className="text-gray-600 text-sm mb-2">
+                              {new Date(post.publishedAt).getFullYear()} {new Date(post.publishedAt).getFullYear() + 1}
+                            </p>
+
+                            {/* Category Tag */}
+                            {post.category && (
+                              <span className="inline-block text-primary font-medium text-sm">
+                                #{post.category}
                               </span>
                             )}
                           </div>
                         </div>
-                      </div>
-                    </Link>
-                  </article>
-                );
-              })}
+                      </Link>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Filter Sidebar */}
+          <div className="lg:w-64">
+            <h3 className="text-xl font-bold text-white mb-6">Filter by Tag</h3>
+            <div className="space-y-3">
+              {availableTags.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => toggleTag(tag)}
+                  className={`block w-full text-left px-3 py-2 rounded-md transition-colors duration-200 ${
+                    selectedTags.includes(tag)
+                      ? 'bg-gray-700 text-white'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
             </div>
-          )}
-        </section>
-      </div>
+            
+            {/* Clear Filters Button */}
+            {selectedTags.length > 0 && (
+              <button
+                onClick={() => setSelectedTags([])}
+                className="mt-6 w-full px-3 py-2 text-sm text-gray-400 hover:text-white transition-colors duration-200"
+              >
+                Clear all filters
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }; 

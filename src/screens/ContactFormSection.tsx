@@ -17,7 +17,7 @@ export const ContactFormSection = (): JSX.Element => {
     {
       icon: <AtSignIcon className="w-10 h-9" />,
       title: "Email us",
-      value: "fyndlynk.4@gmail.com",
+      value: "info@fyndlynk.com",
     },
     {
       icon: <PhoneIcon className="w-10 h-9" />,
@@ -39,13 +39,11 @@ export const ContactFormSection = (): JSX.Element => {
           <h2 className="section-title">Contact<span className="dot">.</span></h2>
         </div>
         <div className="container mx-auto">
-          <div className="flex flex-col lg:flex-row items-start gap-8 w-full">
+          <div className="flex flex-col lg:flex-row items-stretch gap-8 w-full">
             {/* Left side - Contact information */}
             <div className="w-full lg:w-1/2 flex flex-col space-y-6">
-              <div className="mb-2">
-                <span className="font-inter text-white rounded-[3px] border border-light border-border bg-[#222121] px-3 py-0.5 w-fit text-sm inline-block border-[0.5px]">FyndUs.</span>
-              </div>
-              <h2 className="font-inter font-semibold text-3xl md:text-4xl text-white">Let&apos;s Talk!</h2>
+              
+              <h2 className="font-inter font-semibold text-3xl md:text-4xl text-white">FyndUs<span className="text-red-500">.</span></h2>
               <p className="font-inter font-medium text-neutral-400 text-base ">Send us a message and we will get back<br />to you within 24 hours to arrange a call</p>
               <div className="space-y-3">
                 {contactInfo.map((info, index) => (
@@ -65,28 +63,28 @@ export const ContactFormSection = (): JSX.Element => {
               </div>     
             </div>
             {/* Right side - Contact form */}
-            <div className="w-full lg:w-1/2    flex items-start">
-              <Card className="bg-black rounded-lg border border-neutral-700 p-3 w-full">
-                <CardContent className="space-y-3">
+            <div className="w-full lg:w-1/2 flex items-stretch">
+              <Card className="bg-black rounded-lg border border-neutral-700 p-3 w-full h-full">
+                <CardContent className="space-y-3 h-full flex flex-col">
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Input
-                      className="bg-neutral-900 rounded-md border border-neutral-700 h-10 px-5  py-6 text-white placeholder:text-white text-sm"
+                      className="bg-neutral-900 rounded-md border border-neutral-700 h-14 px-4 py-3 text-white placeholder:text-white text-sm"
                       placeholder="First Name"
                     />
                     <Input
-                      className="bg-neutral-900 rounded-md border border-neutral-700 h-10 px-3 py-6 text-white placeholder:text-white text-sm"
+                      className="bg-neutral-900 rounded-md border border-neutral-700 h-14 px-4 py-3 text-white placeholder:text-white text-sm"
                       placeholder="Last Name"
                     />
                   </div>
                   <Input
-                    className="bg-neutral-900 rounded-md border border-neutral-700 h-10 px-3 py-6 text-white placeholder:text-white w-full text-sm"
+                    className="bg-neutral-900 rounded-md border border-neutral-700 h-14 px-4 py-3 text-white placeholder:text-white w-full text-sm"
                     placeholder="Email"
                   />
                   <Textarea
-                    className="bg-neutral-900 rounded-md border border-neutral-700 min-h-[100px] px-3 py-16 text-white placeholder:text-white w-full resize-none text-sm"
+                    className="bg-neutral-900 rounded-md border border-neutral-700 min-h-[120px] px-4 py-3 text-white placeholder:text-white w-full resize-none text-sm flex-1"
                     placeholder="Official"
                   />
-                  <Button className="w-full h-10 rounded-md font-inter font-bold text-white text-base hover:opacity-90 transition-opacity" style={{backgroundColor: '#FF3131'}}>
+                  <Button className="w-full h-14 rounded-md font-inter font-bold text-white text-base hover:opacity-90 transition-opacity mt-auto" style={{backgroundColor: '#FF3131'}}>
                     Get Started
                   </Button>
                 </CardContent>

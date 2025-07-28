@@ -13,7 +13,23 @@ const urlFor = (source: SanityImageSource) =>
     : null;
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]`;
-const RELATED_POSTS_QUERY = `*[_type == "post" && slug.current != $slug && category == $category]|order(publishedAt desc)[0...3]{_id, title, slug, category, publishedAt, readingTime, image}`;
+
+// Updated queries for better related posts logic
+const RELATED_POSTS_QUERY = `*[
+  _type == "post" 
+  && slug.current != $slug 
+  && (
+    category == $category ||
+    title match $keywords ||
+    subtitle match $keywords ||
+    body[0].children[0].text match $keywords
+  )
+]|order(publishedAt desc)[0...6]{_id, title, subtitle, slug, category, publishedAt, readingTime, image}`;
+
+const LATEST_POSTS_QUERY = `*[
+  _type == "post" 
+  && slug.current != $slug
+]|order(publishedAt desc)[0...6]{_id, title, subtitle, slug, category, publishedAt, readingTime, image}`;
 
 // Custom components for PortableText
 const portableTextComponents: PortableTextComponents = {
@@ -100,40 +116,14 @@ const portableTextComponents: PortableTextComponents = {
   },
 };
 
-// Reading Progress Component
-const ReadingProgress: React.FC = () => {
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const updateProgress = () => {
-      const scrolled = window.scrollY;
-      const maxHeight = document.body.scrollHeight - window.innerHeight;
-      const progress = (scrolled / maxHeight) * 100;
-      setProgress(Math.min(progress, 100));
-    };
-
-    window.addEventListener('scroll', updateProgress);
-    return () => window.removeEventListener('scroll', updateProgress);
-  }, []);
-
-  return (
-    <div className="fixed top-0 left-0 w-full h-1 bg-gray-800 z-50">
-      <div
-        className="h-full bg-primary transition-all duration-150"
-        style={{ width: `${progress}%` }}
-      />
-    </div>
-  );
-};
-
 // Share Component
 const ShareButtons: React.FC<{ title: string; url: string }> = ({ title, url }) => {
   const shareLinks = [
     {
-      name: 'Twitter',
+      name: 'X (Twitter)',
       icon: (
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M24 4.557a9.93 9.93 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724c-.951.564-2.005.974-3.127 1.195a4.92 4.92 0 0 0-8.384 4.482c-4.086-.205-7.713-2.164-10.141-5.144a4.822 4.822 0 0 0-.666 2.475c0 1.708.87 3.216 2.188 4.099a4.904 4.904 0 0 1-2.229-.616c-.054 2.281 1.581 4.415 3.949 4.89a4.936 4.936 0 0 1-2.224.084c.627 1.956 2.444 3.377 4.6 3.417a9.867 9.867 0 0 1-6.102 2.104c-.396 0-.787-.023-1.175-.069a13.945 13.945 0 0 0 7.548 2.212c9.057 0 14.009-7.513 14.009-14.009 0-.213-.005-.425-.014-.636a10.012 10.012 0 0 0 2.457-2.548z"/>
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
         </svg>
       ),
       url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
@@ -167,36 +157,7 @@ const ShareButtons: React.FC<{ title: string; url: string }> = ({ title, url }) 
   );
 };
 
-// Back to Top Component
-const BackToTop: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    const toggleVisibility = () => {
-      setIsVisible(window.scrollY > 300);
-    };
-
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  return (
-    <button
-      onClick={scrollToTop}
-      className={`fixed bottom-8 right-8 p-3 bg-primary text-black rounded-full shadow-lg hover:bg-primary/90 transition-all duration-300 z-40 ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
-      }`}
-    >
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-      </svg>
-    </button>
-  );
-};
 
 export const PostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -217,13 +178,40 @@ export const PostPage: React.FC = () => {
         const fetchedPost = await client.fetch<SanityDocument>(POST_QUERY, { slug });
         setPost(fetchedPost);
 
-        // Fetch related posts if we have a category
+        // Extract keywords from post title and category
+        const keywords = [];
+        if (fetchedPost?.title) {
+          keywords.push(...fetchedPost.title.toLowerCase().split(' ').filter((word: string) => word.length > 3));
+        }
         if (fetchedPost?.category) {
-          const related = await client.fetch<SanityDocument[]>(RELATED_POSTS_QUERY, { 
-            slug, 
-            category: fetchedPost.category 
-          });
-          setRelatedPosts(related);
+          keywords.push(fetchedPost.category.toLowerCase());
+        }
+        if (fetchedPost?.subtitle) {
+          keywords.push(...fetchedPost.subtitle.toLowerCase().split(' ').filter((word: string) => word.length > 3));
+        }
+
+        // Create keywords string for Sanity query
+        const keywordsString = keywords.join(' ');
+
+        // Fetch related posts using keywords and category
+        const related = await client.fetch<SanityDocument[]>(RELATED_POSTS_QUERY, { 
+          slug, 
+          category: fetchedPost?.category || '',
+          keywords: keywordsString
+        });
+
+        // If we have 3+ related posts, use them
+        if (related.length >= 3) {
+          setRelatedPosts(related.slice(0, 3));
+        } else if (related.length > 0) {
+          // If we have 1-2 related posts, fill with latest posts
+          const latest = await client.fetch<SanityDocument[]>(LATEST_POSTS_QUERY, { slug });
+          const combined = [...related, ...latest.filter(p => !related.find(rp => rp._id === p._id))];
+          setRelatedPosts(combined.slice(0, 3));
+        } else {
+          // If no related posts, show latest 3 posts
+          const latest = await client.fetch<SanityDocument[]>(LATEST_POSTS_QUERY, { slug });
+          setRelatedPosts(latest.slice(0, 3));
         }
       } catch (error) {
         console.error('Error fetching post:', error);
@@ -270,13 +258,12 @@ export const PostPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black">
-      <ReadingProgress />
       
       <div className="container mx-auto px-4 py-16 max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-10 gap-12">
           
           {/* Main Content */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-7">
             <article>
               
               {/* Back Button */}
@@ -380,73 +367,78 @@ export const PostPage: React.FC = () => {
             </article>
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8 space-y-8">
+          {/* Sidebar - Aligned with Share section */}
+          <div className="lg:col-span-3">
+            <div className="sticky top-8">
               
-              {/* Related Posts */}
+              {/* Related Posts - Starting from Share article level */}
               {relatedPosts.length > 0 && (
-                <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+                <div className="w-full">
                   <h3 className="text-xl font-bold text-white mb-6">Related Posts</h3>
-                  <div className="space-y-4">
+                  <div className="space-y-6 w-full">
                     {relatedPosts.map((relatedPost) => {
                       const relatedImageUrl = relatedPost.image
-                        ? urlFor(relatedPost.image)?.width(200).height(120).url()
+                        ? urlFor(relatedPost.image)?.width(300).height(200).url()
                         : null;
 
                       return (
-                        <Link
-                          key={relatedPost._id}
-                          to={`/post/${relatedPost.slug.current}`}
-                          className="block group"
-                        >
-                          <div className="flex gap-3">
-                            <div className="flex-shrink-0 w-16 h-16 bg-gray-800 rounded-lg overflow-hidden">
-                              {relatedImageUrl ? (
-                                <img
-                                  src={relatedImageUrl}
-                                  alt={relatedPost.title}
-                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center">
-                                  <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="text-white text-sm font-medium group-hover:text-primary transition-colors line-clamp-2 mb-1">
-                                {relatedPost.title}
-                              </h4>
-                              <div className="flex items-center gap-2 text-xs text-gray-500">
-                                <span>{new Date(relatedPost.publishedAt).toLocaleDateString()}</span>
-                                {relatedPost.readingTime && (
-                                  <>
-                                    <span>•</span>
-                                    <span>{relatedPost.readingTime}</span>
-                                  </>
+                        <article key={relatedPost._id} className="group cursor-pointer w-full">
+                          <Link to={`/post/${relatedPost.slug.current}`} className="block w-full">
+                            <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:transform hover:scale-[1.02] w-full h-24 flex">
+                              
+                              {/* Featured Image - Left 25-30% */}
+                              <div className="relative w-1/4 h-full overflow-hidden flex-shrink-0">
+                                {relatedImageUrl ? (
+                                  <img
+                                    src={relatedImageUrl}
+                                    alt={relatedPost.title}
+                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                  </div>
                                 )}
                               </div>
+
+                              {/* Content - Right 70-75% */}
+                              <div className="flex-1 p-3 flex flex-col justify-between">
+                                {/* Title */}
+                                <h4 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                                  {relatedPost.title}
+                                </h4>
+
+                                {/* Bottom row with date and category */}
+                                <div className="flex items-center justify-between mt-2">
+                                  {/* Date */}
+                                  <p className="text-gray-600 text-xs">
+                                    {new Date(relatedPost.publishedAt).getFullYear()} {new Date(relatedPost.publishedAt).getFullYear() + 1}
+                                  </p>
+
+                                  {/* Category Tag */}
+                                  {relatedPost.category && (
+                                    <span className="inline-block text-primary font-medium text-xs">
+                                      #{relatedPost.category}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </Link>
+                          </Link>
+                        </article>
                       );
                     })}
                   </div>
                 </div>
               )}
 
-
-
             </div>
           </div>
 
         </div>
       </div>
-
-      <BackToTop />
     </div>
   );
 }; 

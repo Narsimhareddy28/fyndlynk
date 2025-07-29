@@ -5,6 +5,7 @@ import { SanityDocument } from "@sanity/client";
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { PortableText, PortableTextComponents } from "@portabletext/react";
 import { client } from "../sanity/client";
+import { SocialFollow } from "../components/ui/social-follow";
 
 const { projectId, dataset } = client.config();
 const urlFor = (source: SanityImageSource) =>
@@ -260,7 +261,9 @@ export const PostPage: React.FC = () => {
     <div className="min-h-screen bg-black">
       
       <div className="container mx-auto px-4 py-16 max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-10 gap-12">
+        
+        {/* Desktop Layout - Grid with sidebar */}
+        <div className="hidden lg:grid grid-cols-1 lg:grid-cols-10 gap-12">
           
           {/* Main Content */}
           <div className="lg:col-span-7">
@@ -367,9 +370,9 @@ export const PostPage: React.FC = () => {
             </article>
           </div>
 
-          {/* Sidebar - Aligned with Share section */}
+          {/* Desktop Sidebar - Aligned with Share section */}
           <div className="lg:col-span-3">
-            <div className="sticky top-8">
+            <div className="sticky top-8" style={{ marginTop: '320px' }}>
               
               {/* Related Posts - Starting from Share article level */}
               {relatedPosts.length > 0 && (
@@ -434,10 +437,267 @@ export const PostPage: React.FC = () => {
                 </div>
               )}
 
+              {/* Social Follow Section */}
+              <div className="w-full mt-8" style={{ marginTop: '1500px' }}>
+                <SocialFollow />
+              </div>
+
             </div>
           </div>
 
         </div>
+
+        {/* Tablet/Mobile Layout - Single column */}
+        <div className="lg:hidden">
+          <article>
+            
+            {/* Back Button */}
+            <Link 
+              to="/blog" 
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-12 group"
+            >
+              <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to posts
+            </Link>
+
+            {/* Post Header */}
+            <header className="mb-12">
+              
+              {/* Category */}
+              {post.category && (
+                <div className="mb-6">
+                  <span className="inline-block bg-primary/20 text-primary px-4 py-2 rounded-full text-sm font-medium">
+                    {post.category}
+                  </span>
+                </div>
+              )}
+
+              {/* Title */}
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                {post.title}
+              </h1>
+              
+              {/* Subtitle */}
+              {post.subtitle && (
+                <h2 className="text-xl md:text-2xl text-gray-300 mb-8 font-medium leading-relaxed">
+                  {post.subtitle}
+                </h2>
+              )}
+
+              {/* Meta Info */}
+              <div className="flex flex-wrap items-center gap-6 text-gray-400 text-sm pb-8 border-b border-gray-800">
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span>Published: {new Date(post.publishedAt).toLocaleDateString()}</span>
+                </div>
+                {post.readingTime && (
+                  <div className="flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{post.readingTime}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Share Buttons */}
+              <div className="mt-6">
+                <p className="text-gray-400 text-sm mb-3">Share this article:</p>
+                <ShareButtons title={post.title} url={currentUrl} />
+              </div>
+            </header>
+
+            {/* Featured Image */}
+            {postImageUrl && (
+              <div className="mb-16">
+                <img
+                  src={postImageUrl}
+                  alt={post.title}
+                  className="w-full rounded-xl shadow-2xl"
+                  loading="eager"
+                />
+              </div>
+            )}
+
+            {/* Content */}
+            <div className="prose-custom max-w-none">
+              {Array.isArray(post.body) && (
+                <PortableText value={post.body} components={portableTextComponents} />
+              )}
+            </div>
+
+            {/* Article Footer */}
+            <footer className="mt-16 pt-12 border-t border-gray-800">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                <div>
+                  <p className="text-gray-400 text-sm mb-2">Share this article:</p>
+                  <ShareButtons title={post.title} url={currentUrl} />
+                </div>
+                <Link 
+                  to="/blog" 
+                  className="inline-flex items-center gap-2 bg-primary text-black px-6 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors"
+                >
+                  Read more posts
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+              </div>
+            </footer>
+
+          </article>
+
+          {/* Tablet/Mobile Related Posts and Social Follow */}
+          <div className="mt-16">
+            {/* Tablet Layout - Side by side */}
+            <div className="hidden md:grid md:grid-cols-2 gap-8">
+              {/* Related Posts */}
+              {relatedPosts.length > 0 && (
+                <div className="w-full">
+                  <h3 className="text-xl font-bold text-white mb-6">Related Posts</h3>
+                  <div className="space-y-6 w-full">
+                    {relatedPosts.map((relatedPost) => {
+                      const relatedImageUrl = relatedPost.image
+                        ? urlFor(relatedPost.image)?.width(300).height(200).url()
+                        : null;
+
+                      return (
+                        <article key={relatedPost._id} className="group cursor-pointer w-full">
+                          <Link to={`/post/${relatedPost.slug.current}`} className="block w-full">
+                            <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:transform hover:scale-[1.02] w-full h-24 flex">
+                              
+                              {/* Featured Image - Left 25-30% */}
+                              <div className="relative w-1/4 h-full overflow-hidden flex-shrink-0">
+                                {relatedImageUrl ? (
+                                  <img
+                                    src={relatedImageUrl}
+                                    alt={relatedPost.title}
+                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Content - Right 70-75% */}
+                              <div className="flex-1 p-3 flex flex-col justify-between">
+                                {/* Title */}
+                                <h4 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                                  {relatedPost.title}
+                                </h4>
+
+                                {/* Bottom row with date and category */}
+                                <div className="flex items-center justify-between mt-2">
+                                  {/* Date */}
+                                  <p className="text-gray-600 text-xs">
+                                    {new Date(relatedPost.publishedAt).getFullYear()} {new Date(relatedPost.publishedAt).getFullYear() + 1}
+                                  </p>
+
+                                  {/* Category Tag */}
+                                  {relatedPost.category && (
+                                    <span className="inline-block text-primary font-medium text-xs">
+                                      #{relatedPost.category}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Social Follow */}
+              <div className="w-full">
+                <SocialFollow />
+              </div>
+            </div>
+
+            {/* Mobile Layout - Stacked */}
+            <div className="md:hidden space-y-8">
+              {/* Related Posts */}
+              {relatedPosts.length > 0 && (
+                <div className="w-full">
+                  <h3 className="text-xl font-bold text-white mb-6">Related Posts</h3>
+                  <div className="space-y-6 w-full">
+                    {relatedPosts.map((relatedPost) => {
+                      const relatedImageUrl = relatedPost.image
+                        ? urlFor(relatedPost.image)?.width(300).height(200).url()
+                        : null;
+
+                      return (
+                        <article key={relatedPost._id} className="group cursor-pointer w-full">
+                          <Link to={`/post/${relatedPost.slug.current}`} className="block w-full">
+                            <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:transform hover:scale-[1.02] w-full h-24 flex">
+                              
+                              {/* Featured Image - Left 25-30% */}
+                              <div className="relative w-1/4 h-full overflow-hidden flex-shrink-0">
+                                {relatedImageUrl ? (
+                                  <img
+                                    src={relatedImageUrl}
+                                    alt={relatedPost.title}
+                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Content - Right 70-75% */}
+                              <div className="flex-1 p-3 flex flex-col justify-between">
+                                {/* Title */}
+                                <h4 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                                  {relatedPost.title}
+                                </h4>
+
+                                {/* Bottom row with date and category */}
+                                <div className="flex items-center justify-between mt-2">
+                                  {/* Date */}
+                                  <p className="text-gray-600 text-xs">
+                                    {new Date(relatedPost.publishedAt).getFullYear()} {new Date(relatedPost.publishedAt).getFullYear() + 1}
+                                  </p>
+
+                                  {/* Category Tag */}
+                                  {relatedPost.category && (
+                                    <span className="inline-block text-primary font-medium text-xs">
+                                      #{relatedPost.category}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Social Follow */}
+              <div className="w-full">
+                <SocialFollow />
+              </div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </div>
   );
